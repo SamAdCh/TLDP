@@ -53,6 +53,7 @@ protobuf==3.12
 pyarrow==11.0.0
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
+pybind11==2.7.1
 pydeck==0.8.0
 Pygments==2.14.0
 Pympler==1.0.1

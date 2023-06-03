@@ -8,7 +8,7 @@ from tensorflow.keras.preprocessing.image import load_img
 from tensorflow.keras.preprocessing.image import img_to_array
 from tensorflow.keras.models import load_model
 
-filepath = 'E:/Tomato_Leaf_Diseases_Prediction/InceptionV3_256.h5'
+filepath = 'E:/Plant_Leaf_Disease_Prediction/Tomato_Leaf_Diseases_Prediction/InceptionV3_256.h5'
 model = load_model(filepath)
 print(model)
 
@@ -74,7 +74,7 @@ def predict():
         filename = file.filename        
         print("@@ Input posted = ", filename)
         
-        file_path = os.path.join('E:/Tomato_Leaf_Diseases_Prediction/App/static/upload', filename)
+        file_path = os.path.join('static/upload', filename)
         file.save(file_path)
 
         print("@@ Predicting class......")

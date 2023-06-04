@@ -8,7 +8,7 @@ from tensorflow.keras.preprocessing.image import load_img
 from tensorflow.keras.preprocessing.image import img_to_array
 from tensorflow.keras.models import load_model
 
-filepath = 'E:/Plant_Leaf_Disease_Prediction/Tomato_Leaf_Diseases_Prediction/InceptionV3_256.h5'
+filepath = 'https://drive.google.com/file/d/1R5wTwHwtQENSMIysP48taZJ9CfP8B-N0/view?usp=drive_link'
 model = load_model(filepath)
 print(model)
 

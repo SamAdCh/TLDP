@@ -19,7 +19,7 @@ model = load_model(model_path)
 print("Model Loaded Successfully")
 
 def pred_tomato_disease(tomato_plant):
-    test_image = load_img(tomato_plant, target_size=(256, 256)) # load image 
+    test_image = load_img(tomato_plant, target_size=(128, 128)) # load image 
     st.write("@@ Got Image for prediction")
   
     test_image = img_to_array(test_image)/255 # convert image to np array and normalize

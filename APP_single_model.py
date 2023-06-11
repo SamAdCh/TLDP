@@ -1,9 +1,8 @@
 # Import necessary libraries
-from flask import Flask, render_template, request
+import streamlit as st
 import numpy as np
 import os
 import requests
-
 from tensorflow.keras.preprocessing.image import load_img
 from tensorflow.keras.preprocessing.image import img_to_array
 from tensorflow.keras.models import load_model
@@ -19,94 +18,51 @@ with open(model_path, 'wb') as f:
 model = load_model(model_path)
 print("Model Loaded Successfully")
 
-def pred_tomato_dieas(tomato_plant):
-  test_image = load_img(tomato_plant, target_size = (256, 256)) # load image 
-  print("@@ Got Image for prediction")
+def pred_tomato_disease(tomato_plant):
+    test_image = load_img(tomato_plant, target_size=(256, 256)) # load image 
+    st.write("@@ Got Image for prediction")
   
-  test_image = img_to_array(test_image)/255 # convert image to np array and normalize
-  test_image = np.expand_dims(test_image, axis = 0) # change dimention 3D to 4D
+    test_image = img_to_array(test_image)/255 # convert image to np array and normalize
+    test_image = np.expand_dims(test_image, axis=0) # change dimension 3D to 4D
   
-  result = model.predict(test_image) # predict diseased palnt or not
-  print('@@ Raw result = ', result)
+    result = model.predict(test_image) # predict diseased plant or not
+    st.write('@@ Raw result = ', result)
   
-  pred = np.argmax(result, axis=1)
-  print(pred)
-  if pred==0:
-      return "Tomato - Bacteria Spot Disease", 'Tomato-Bacteria Spot.html'
-       
-  elif pred==1:
-      return "Tomato - Early Blight Disease", 'Tomato-Early_Blight.html'
-        
-  elif pred==2:
-      return "Tomato - Late Blight Disease", 'Tomato - Late_blight.html'
-       
-  elif pred==3:
-      return "Tomato - Leaf Mold Disease", 'Tomato - Leaf_Mold.html'
-        
-  elif pred==4:
-      return "Tomato - Septoria Leaf Spot Disease", 'Tomato - Septoria_leaf_spot.html'
-        
-  elif pred==5:
-      return "Tomato - Two Spotted Spider Mite Disease", 'Tomato - Two-spotted_spider_mite.html'
+    pred = np.argmax(result, axis=1)
+    st.write(pred)
     
-  elif pred==6:
-      return "Tomato - Target Spot Disease", 'Tomato - Target_Spot.html'
-        
-  elif pred==7:
-      return "Tomato - Tomoato Yellow Leaf Curl Virus Disease", 'Tomato - Tomato_Yellow_Leaf_Curl_Virus.html'
+    classes = [
+        "Tomato - Bacteria Spot Disease",
+        "Tomato - Early Blight Disease",
+        "Tomato - Late Blight Disease",
+        "Tomato - Leaf Mold Disease",
+        "Tomato - Septoria Leaf Spot Disease",
+        "Tomato - Two Spotted Spider Mite Disease",
+        "Tomato - Target Spot Disease",
+        "Tomato - Tomato Yellow Leaf Curl Virus Disease",
+        "Tomato - Tomato Mosaic Virus Disease",
+        "Tomato - Healthy and Fresh"
+    ]
 
-  elif pred==8:
-      return "Tomato - Tomato Mosaic Virus Disease", 'Tomato - Tomato_mosaic_virus.html'
-    
-  elif pred==9:
-      return "Tomato - Healthy and Fresh", 'Tomato-Healthy.html'
-    
+    return classes[pred[0]]
 
-# Create flask instance
-app = Flask(__name__)
 
-# render index.html page
-@app.route("/", methods=['GET', 'POST'])
-def home():
-        return render_template('index.html')
-    
- 
-# get input image from client then predict class and render respective .html page for solution
-@app.route("/predict", methods = ['GET','POST'])
-def predict():
-     if request.method == 'POST':
-        file = request.files['image'] # fet input
-        filename = file.filename        
-        print("@@ Input posted = ", filename)
+# Create Streamlit app
+def main():
+    st.title("Tomato Disease Classification")
+    st.write("Upload an image of a tomato plant to classify its disease.")
+
+    uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
+    if uploaded_file is not None:
+        file_path = "uploaded_image.jpg"
+        with open(file_path, "wb") as f:
+            f.write(uploaded_file.getbuffer())
         
-        file_path = os.path.join('static/upload', filename)
-        file.save(file_path)
+        st.write("@@ Predicting class......")
+        pred = pred_tomato_disease(file_path)
+        
+        st.write("Prediction:", pred)
 
-        print("@@ Predicting class......")
-        pred, output_page = pred_tomato_dieas(tomato_plant=file_path)
-              
-        return render_template(output_page, pred_output = pred, user_image = file_path)
-    
-# For local system & cloud
+
 if __name__ == "__main__":
-    app.run(threaded=False,port=1010)
-
-    import sqlite3
-
-# Connect to database
-conn = sqlite3.connect('example.db')
-
-# Create a cursor object to interact with the database
-cursor = conn.cursor()
-
-# Execute a SQL query
-cursor.execute("SELECT * FROM my_table")
-
-# Fetch results
-results = cursor.fetchall()
-
-# Close the cursor and database connection
-cursor.close()
-conn.close()
-    
-    
+    main()

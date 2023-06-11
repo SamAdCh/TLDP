@@ -1,17 +1,22 @@
-#Import necessary libraries
+# Import necessary libraries
 from flask import Flask, render_template, request
-
 import numpy as np
 import os
+import requests
 
 from tensorflow.keras.preprocessing.image import load_img
 from tensorflow.keras.preprocessing.image import img_to_array
 from tensorflow.keras.models import load_model
 
-filepath = 'https://github.com/SamAdCh/TLDP/blob/master/model.h5'
-model = load_model(filepath)
-print(model)
+model_url = 'https://github.com/SamAdCh/TLDP/raw/master/model.h5'
+model_path = 'model.h5'
 
+# Download the model file from GitHub
+response = requests.get(model_url)
+with open(model_path, 'wb') as f:
+    f.write(response.content)
+
+model = load_model(model_path)
 print("Model Loaded Successfully")
 
 def pred_tomato_dieas(tomato_plant):
